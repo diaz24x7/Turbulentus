@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TURBULENTUS | Sitio Oficial | Death Metal Colombiano</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Metal Mania, Oswald, Creepster -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Creepster&family=Metal+Mania&family=Oswald:wght@300;500;700&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        metal: ['"Metal Mania"', 'serif'],
+                        horror: ['"Creepster"', 'cursive'],
+                        sans: ['"Oswald"', 'sans-serif'],
+                    },
+                    colors: {
+                        void: '#060202',
+                        crimson: {
+                            DEFAULT: '#991b1b',
+                            dark: '#450a0a',
+                            glow: '#ef4444'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar matching the aesthetic */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #060202;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #450a0a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ef4444;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.7), 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .border-glow {
+            box-shadow: 0 0 15px rgba(153, 27, 27, 0.5);
+        }
+
+        /* Cosmic vortex simulation background */
+        .vortex-bg {
+            background: radial-gradient(circle at center, rgba(69, 10, 10, 0.4) 0%, rgba(6, 2, 2, 1) 70%);
+        }
+    </style>
+</head>
+
+<body class="bg-void text-gray-200 font-sans selection:bg-crimson selection:text-white overflow-x-hidden">
+
+    <!-- Canvas para efecto de cenizas y distorsión cósmica en el fondo (z-30 para superponerse sutilmente sobre los fondos oscuros) -->
+    <canvas id="particlesCanvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-30 opacity-45"></canvas>
+
+    <!-- Header / Barra de Navegación -->
+    <header class="fixed top-0 left-0 w-full bg-void/90 backdrop-blur-md border-b border-crimson/30 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="#inicio" class="flex items-center gap-2">
+                <span class="font-metal text-2xl tracking-wider text-crimson-glow text-glow">TURBULENTUS</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-8 text-sm uppercase tracking-widest font-medium">
+                <a href="#musica" class="hover:text-crimson-glow transition duration-300">Música</a>
+                <a href="#galeria" class="hover:text-crimson-glow transition duration-300">Galería</a>
+                <a href="#tour" class="hover:text-crimson-glow transition duration-300">Rituales</a>
+                <a href="#bio" class="hover:text-crimson-glow transition duration-300">Manifiesto</a>
+                <a href="#tienda" class="hover:text-crimson-glow transition duration-300">Hordas Shop</a>
+                <a href="#contacto" class="hover:text-crimson-glow transition duration-300">Booking</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <!-- Botón Carrito -->
+                <button onclick="toggleCart()"
+                    class="relative p-2 text-gray-300 hover:text-crimson-glow transition z-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <span id="cart-count"
+                        class="absolute -top-1 -right-1 bg-crimson text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center opacity-0 transition-opacity">0</span>
+                </button>
+                <!-- Botón Menú Móvil -->
+                <button onclick="toggleMobileMenu()"
+                    class="md:hidden p-2 text-gray-300 hover:text-crimson-glow transition z-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <!-- Menú Móvil Desplegable -->
+        <div id="mobile-menu"
+            class="hidden md:hidden bg-void/95 border-b border-crimson/30 px-4 py-4 flex flex-col gap-4 text-center uppercase tracking-widest text-sm z-50">
+            <a href="#musica" onclick="toggleMobileMenu()"
+                class="hover:text-crimson-glow transition py-2 border-b border-gray-900">Música</a>
+            <a href="#galeria" onclick="toggleMobileMenu()"
+                class="hover:text-crimson-glow transition py-2 border-b border-gray-900">Galería</a>
+            <a href="#tour" onclick="toggleMobileMenu()"
+                class="hover:text-crimson-glow transition py-2 border-b border-gray-900">Rituales</a>
+            <a href="#bio" onclick="toggleMobileMenu()"
+                class="hover:text-crimson-glow transition py-2 border-b border-gray-900">Manifiesto</a>
+            <a href="#tienda" onclick="toggleMobileMenu()"
+                class="hover:text-crimson-glow transition py-2 border-b border-gray-900">Hordas Shop</a>
+            <a href="#contacto" onclick="toggleMobileMenu()" class="hover:text-crimson-glow transition py-2">Booking</a>
+        </div>
+    </header>
+
+    <!-- Héroe / Inicio con el Logo Brutal Rediseñado -->
+    <section id="inicio"
+        class="relative min-h-screen flex flex-col justify-center items-center pt-20 px-4 overflow-hidden vortex-bg z-10">
+        <!-- Fondo de Nebulosa de fondo adicional en HTML -->
+        <div class="absolute inset-0 bg-cover bg-center mix-blend-color-dodge opacity-40 pointer-events-none"
+            style="background-image: url('logo.png'); filter: blur(2px);">
+        </div>
+
+        <div class="max-w-4xl w-full text-center z-10 space-y-8 mt-6">
+            <!-- Imagen del Logo Integrada -->
+            <div class="relative inline-block group select-none">
+                <div
+                    class="absolute -inset-1 rounded-lg bg-gradient-to-r from-crimson to-black opacity-40 blur-xl group-hover:opacity-75 transition duration-1000 group-hover:duration-200">
+                </div>
+                <img src="logo.png" alt="Turbulentus Logo"
+                    class="relative max-w-full h-auto mx-auto rounded-lg shadow-2xl border border-crimson/20 transform transition duration-500 hover:scale-[1.02]">
+            </div>
+
+            <!-- Manifiesto de insignificancia -->
+            <div class="max-w-2xl mx-auto space-y-4">
+                <p class="font-horror text-2xl md:text-3xl text-crimson-glow tracking-widest text-glow animate-pulse">
+                    LA TURBULENCIA HA LLEGADO
+                </p>
+                <p
+                    class="text-gray-400 text-sm md:text-base tracking-widest uppercase leading-relaxed max-w-xl mx-auto">
+                    Ante el colapso, tu existencia no es más que ceniza arrastrada por TURBULENTUS. Abre los oídos a la oscuridad.
+                </p>
+            </div>
+
+            <!-- Botón Atmosférico del Sintetizador Cósmico -->
+            <div class="pb-8 flex flex-wrap justify-center gap-4">
+                <button onclick="toggleAmbientSynth()" id="synth-btn"
+                    class="px-6 py-3 bg-gradient-to-r from-crimson-dark to-crimson hover:from-crimson hover:to-crimson-glow text-white text-xs tracking-widest uppercase font-bold border border-crimson/50 rounded-none transition duration-300 shadow-lg hover:shadow-red-900/50 flex items-center gap-2">
+                    <span class="relative flex h-3 w-3">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    </span>
+                    <span id="synth-text">Invocación Sonora (Activar Drone)</span>
+                </button>
+                <a href="#musica"
+                    class="px-6 py-3 bg-transparent hover:bg-white/5 text-gray-300 text-xs tracking-widest uppercase font-bold border border-gray-700 hover:border-crimson transition duration-300">
+                    Escuchar Caos
+                </a>
+            </div>
+        </div>
+
+        <!-- Indicador de Scroll -->
+        <div hidden class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center animate-bounce opacity-60">
+            <span class="text-xs tracking-widest text-gray-500 uppercase">Descender</span>
+            <svg class="w-4 h-4 text-crimson-glow mx-auto mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 1: MÚSICA & DISCOGRAFÍA (Prioridad 1) -->
+    <section id="musica" class="relative py-24 px-4 bg-black/90 border-t border-crimson/20 z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="font-metal text-5xl md:text-6xl text-white tracking-wider">PROPAGACIÓN SÓNICA</h2>
+                <div class="w-24 h-1 bg-crimson mx-auto mt-4"></div>
+                <p class="text-gray-500 text-xs tracking-widest uppercase mt-2">Compendios de disolución y colapso</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                <!-- Álbum principal / Reproductor -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="relative group border border-crimson/30 overflow-hidden">
+                        <img src="logo.png" alt="Portada de Álbum"
+                            class="w-full h-auto transform transition duration-500 group-hover:scale-105 opacity-80">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex items-end p-6">
+                            <div>
+                                <span
+                                    class="bg-crimson text-white text-[10px] uppercase tracking-widest px-2 py-1 font-bold">Lanzamiento
+                                    2026</span>
+                                <h3 class="font-metal text-3xl text-white mt-2">VÓRTICE ANÁRQUICO</h3>
+                                <p class="text-gray-400 text-xs tracking-wider">LP Debut Completo</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enlaces Externos -->
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <a href="https://spotify.com" target="_blank"
+                            class="py-3 bg-zinc-900 hover:bg-green-900/30 border border-zinc-800 hover:border-green-600/50 text-xs uppercase tracking-wider transition duration-300">
+                            Spotify
+                        </a>
+                        <a href="https://bandcamp.com" target="_blank"
+                            class="py-3 bg-zinc-900 hover:bg-sky-900/30 border border-zinc-800 hover:border-sky-600/50 text-xs uppercase tracking-wider transition duration-300">
+                            Bandcamp
+                        </a>
+                        <a href="https://youtube.com" target="_blank"
+                            class="py-3 bg-zinc-900 hover:bg-red-900/30 border border-zinc-800 hover:border-red-600/50 text-xs uppercase tracking-wider transition duration-300">
+                            YouTube
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Lista de Canciones Interactivas y Letras -->
+                <div class="lg:col-span-7 bg-zinc-950/80 border border-crimson/15 p-6 md:p-8 space-y-6">
+                    <h4 class="font-metal text-2xl text-crimson-glow">Estructuras del Abismo</h4>
+
+                    <!-- Tracklist -->
+                    <div class="space-y-2">
+                        <!-- Track 1 -->
+                        <div onclick="selectTrack(1)" id="track-1"
+                            class="track-row flex items-center justify-between p-3 bg-crimson-dark/10 border border-crimson/20 hover:border-crimson-glow cursor-pointer transition">
+                            <div class="flex items-center gap-4">
+                                <span class="font-metal text-xl text-crimson-glow">01</span>
+                                <div>
+                                    <p class="font-bold text-sm tracking-wider uppercase text-white">Viento de Ceniza
+                                        (Intro)</p>
+                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest">Ambiental /
+                                        Atmosférico</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-gray-500 font-bold">02:14</span>
+                        </div>
+                        <!-- Track 2 -->
+                        <div onclick="selectTrack(2)" id="track-2"
+                            class="track-row flex items-center justify-between p-3 bg-transparent border border-zinc-900 hover:border-crimson-glow cursor-pointer transition">
+                            <div class="flex items-center gap-4">
+                                <span class="font-metal text-xl text-gray-600">02</span>
+                                <div>
+                                    <p class="font-bold text-sm tracking-wider uppercase text-gray-300">Abismo Ancestral
+                                    </p>
+                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest">Death Brutal con
+                                        ritmos Thrash</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-gray-500 font-bold">04:45</span>
+                        </div>
+                        <!-- Track 3 -->
+                        <div onclick="selectTrack(3)" id="track-3"
+                            class="track-row flex items-center justify-between p-3 bg-transparent border border-zinc-900 hover:border-crimson-glow cursor-pointer transition">
+                            <div class="flex items-center gap-4">
+                                <span class="font-metal text-xl text-gray-600">03</span>
+                                <div>
+                                    <p class="font-bold text-sm tracking-wider uppercase text-gray-300">Insignificancia
+                                        Cósmica</p>
+                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest">Tempo Oscuro, Voz
+                                        Ultra-Baja</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-gray-500 font-bold">05:12</span>
+                        </div>
+                        <!-- Track 4 -->
+                        <div onclick="selectTrack(4)" id="track-4"
+                            class="track-row flex items-center justify-between p-3 bg-transparent border border-zinc-900 hover:border-crimson-glow cursor-pointer transition">
+                            <div class="flex items-center gap-4">
+                                <span class="font-metal text-xl text-gray-600">04</span>
+                                <div>
+                                    <p class="font-bold text-sm tracking-wider uppercase text-gray-300">Desgarrados por
+                                        el Caos</p>
+                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest">Blackened Death Veloz
+                                    </p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-gray-500 font-bold">03:58</span>
+                        </div>
+                    </div>
+
+                    <!-- Lyric Display Box -->
+                    <div class="border-t border-zinc-900 pt-6">
+                        <h5 class="text-xs font-bold uppercase tracking-widest text-crimson-glow mb-3">Manifesto del
+                            Grito (Letras)</h5>
+                        <div class="bg-black/50 p-4 border border-zinc-900 h-44 overflow-y-auto rounded text-sm text-gray-400 leading-relaxed font-mono"
+                            id="lyrics-content">
+                            <!-- Letras cargadas dinámicamente -->
+                            Selecciona una pista arriba para revelar los fragmentos del caos.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 2: GALERÍA VISUAL (Prioridad 2) -->
+    <section id="galeria" class="relative py-24 px-4 bg-void border-t border-crimson/20 z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="font-metal text-5xl md:text-6xl text-white tracking-wider">VISIONES DEL COLAPSO</h2>
+                <div class="w-24 h-1 bg-crimson mx-auto mt-4"></div>
+                <p class="text-gray-500 text-xs tracking-widest uppercase mt-2">Pruebas fotográficas del fin de los
+                    tiempos</p>
+            </div>
+
+            <!-- Grid de Galería de Horror Cósmico -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Foto 1 -->
+                <div class="relative group overflow-hidden border border-zinc-800 hover:border-crimson/50 transition">
+                    <img src="concierto.jpg" alt="Concierto Turbulentus"
+                        class="w-full h-64 object-cover transform transition duration-500 group-hover:scale-105 filter grayscale hover:grayscale-0">
+                    <div
+                        class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-6">
+                        <span class="text-xs text-crimson-glow uppercase tracking-widest font-bold">Live en
+                            Bogotá</span>
+                        <h3 class="text-lg font-bold uppercase mt-1">Devastación del Círculo</h3>
+                        <p class="text-xs text-gray-400 mt-1">Ritual en vivo ante las masas insignificantes.</p>
+                    </div>
+                </div>
+                <!-- Foto 2 -->
+                <div class="relative group overflow-hidden border border-zinc-800 hover:border-crimson/50 transition">
+                    <div
+                        class="w-full h-64 bg-zinc-950 flex flex-col items-center justify-center p-6 text-center border-l-4 border-crimson">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-crimson/60 mb-3" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                        </svg>
+                        <h3 class="font-metal text-xl text-white">CIELO ROJO E INVERSIÓN</h3>
+                        <p class="text-xs text-gray-500 uppercase mt-1">Nuestra atmósfera visual está inspirada en
+                            horizontes sangrientos, nubes de azufre y la sensación inminente de que todo puede terminar.
+                        </p>
+                    </div>
+                </div>
+                <!-- Foto 3 -->
+                <div class="relative group overflow-hidden border border-zinc-800 hover:border-crimson/50 transition">
+                    <img src="ritual.jpeg" alt="Sesión Fotográfica"
+                        class="w-full h-64 object-cover transform transition duration-500 group-hover:scale-105 filter hue-rotate-15">
+                    <div
+                        class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-6">
+                        <span class="text-xs text-crimson-glow uppercase tracking-widest font-bold">Sesión
+                            Oficial</span>
+                        <h3 class="text-lg font-bold uppercase mt-1">Cultores del Torbellino</h3>
+                        <p class="text-xs text-gray-400 mt-1">Representación física de las fuerzas de la nada.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 3: TOUR / CONCIERTOS (Prioridad 3) -->
+    <section id="tour" class="relative py-24 px-4 bg-zinc-950/90 border-t border-crimson/20 z-10">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="font-metal text-5xl md:text-6xl text-white tracking-wider">RITUALES DE DESTRUCCIÓN</h2>
+                <div class="w-24 h-1 bg-crimson mx-auto mt-4"></div>
+                <p class="text-gray-500 text-xs tracking-widest uppercase mt-2">Próximas fechas de asalto auditivo</p>
+            </div>
+
+            <!-- Tabla de Conciertos -->
+            <div class="space-y-4">
+                <!-- Fecha 1 -->
+                <div
+                    class="flex flex-col md:flex-row items-center justify-between p-6 bg-black/50 border border-zinc-900 hover:border-crimson/30 transition gap-6">
+                    <div class="flex items-center gap-6">
+                        <div class="text-center border-r border-crimson/30 pr-6">
+                            <p class="font-metal text-3xl text-crimson-glow">12</p>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest">JUN / 2026</p>
+                        </div>
+                        <div>
+                            <span
+                                class="text-[10px] bg-crimson text-white px-2 py-0.5 uppercase tracking-widest font-bold">Bogotá</span>
+                            <h3 class="text-lg font-bold uppercase text-white mt-1">Ace of Spades Club</h3>
+                            <p class="text-xs text-gray-500">Junto a leyendas locales del death metal.</p>
+                        </div>
+                    </div>
+                    <a href="#contacto"
+                        class="w-full md:w-auto px-6 py-2.5 bg-crimson hover:bg-crimson-glow text-white text-xs uppercase tracking-widest font-bold transition text-center">
+                        Reservar Entrada
+                    </a>
+                </div>
+
+                <!-- Fecha 2 -->
+                <div
+                    class="flex flex-col md:flex-row items-center justify-between p-6 bg-black/50 border border-zinc-900 hover:border-crimson/30 transition gap-6">
+                    <div class="flex items-center gap-6">
+                        <div class="text-center border-r border-crimson/30 pr-6">
+                            <p class="font-metal text-3xl text-crimson-glow">04</p>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest">JUL / 2026</p>
+                        </div>
+                        <div>
+                            <span
+                                class="text-[10px] bg-zinc-800 text-gray-300 px-2 py-0.5 uppercase tracking-widest font-bold">Medellín</span>
+                            <h3 class="text-lg font-bold uppercase text-white mt-1">Barnaby Jones</h3>
+                            <p class="text-xs text-gray-500">Invasión en el Valle de Aburrá.</p>
+                        </div>
+                    </div>
+                    <a href="#contacto"
+                        class="w-full md:w-auto px-6 py-2.5 bg-crimson hover:bg-crimson-glow text-white text-xs uppercase tracking-widest font-bold transition text-center">
+                        Reservar Entrada
+                    </a>
+                </div>
+
+                <!-- Fecha 3 -->
+                <div
+                    class="flex flex-col md:flex-row items-center justify-between p-6 bg-black/50 border border-zinc-900 hover:border-crimson/30 transition gap-6">
+                    <div class="flex items-center gap-6">
+                        <div class="text-center border-r border-crimson/30 pr-6">
+                            <p class="font-metal text-3xl text-crimson-glow">29</p>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest">AGO / 2026</p>
+                        </div>
+                        <div>
+                            <span
+                                class="text-[10px] bg-zinc-800 text-gray-300 px-2 py-0.5 uppercase tracking-widest font-bold">Cali</span>
+                            <h3 class="text-lg font-bold uppercase text-white mt-1">La Cruzada Bar</h3>
+                            <p class="text-xs text-gray-500">Fuego cósmico bajo el cielo caleño.</p>
+                        </div>
+                    </div>
+                    <a href="#contacto"
+                        class="w-full md:w-auto px-6 py-2.5 bg-crimson hover:bg-crimson-glow text-white text-xs uppercase tracking-widest font-bold transition text-center">
+                        Reservar Entrada
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 4: BIOGRAFÍA / CULTORES (Prioridad 4) -->
+    <section id="bio" class="relative py-24 px-4 bg-void border-t border-crimson/20 z-10">
+        <div class="max-w-5xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+                <!-- Columna Bio Texto -->
+                <div class="lg:col-span-7 space-y-6">
+                    <span class="font-horror text-2xl text-crimson-glow tracking-widest uppercase">EL ORIGEN DEL
+                        CAOS</span>
+                    <h2 class="font-metal text-5xl text-white tracking-wider leading-none">BIOGRAFÍA: TURBULENTUS</h2>
+                    <div class="w-20 h-1 bg-crimson"></div>
+
+                    <p class="text-gray-400 text-sm md:text-base leading-relaxed tracking-wider">
+                        Nacidos en las entrañas de Colombia, **TURBULENTUS** surge no para encajar, sino para derrumbar.
+                        Nuestro nombre encierra el descontrol, el caos cósmico y la anarquía fundamental de los sistemas
+                        estelares que colapsan.
+                    </p>
+                    <p class="text-gray-400 text-sm md:text-base leading-relaxed tracking-wider">
+                        Fusionamos la velocidad aplastante del *thrash*, la atmósfera fría del *black metal* y la
+                        densidad inamovible de un *death metal* clásico. Nuestra propuesta de voz es profunda,
+                        vocalizada pero profundamente oscura; no nos interesan los gritos estridentes comunes,
+                        preferimos el peso insondable del vacío.
+                    </p>
+                    <div class="border-l-4 border-crimson pl-4 py-2 italic text-gray-300 text-sm">
+                        "Enfrentar a Turbulentus es recordar lo pequeños que somos ante las tormentas silenciosas del
+                        universo."
+                    </div>
+                </div>
+
+                <!-- Columna Integrantes -->
+                <div class="lg:col-span-5 space-y-4">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-crimson-glow mb-4">Los Cultores del
+                        Abismo</h3>
+
+                    <!-- Integrante 1 -->
+                    <div class="flex items-center gap-4 p-4 bg-zinc-950 border border-zinc-900">
+                        <div
+                            class="h-12 w-12 bg-crimson/30 flex items-center justify-center font-metal text-2xl text-white border border-crimson/60">
+                            V</div>
+                        <div>
+                            <h4 class="font-bold text-sm tracking-widest uppercase text-white">Voz Oscura</h4>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest">Invocador de las Profundidades
+                                (Bajo y Vocalizado)</p>
+                        </div>
+                    </div>
+                    <!-- Integrante 2 -->
+                    <div class="flex items-center gap-4 p-4 bg-zinc-950 border border-zinc-900">
+                        <div
+                            class="h-12 w-12 bg-crimson/30 flex items-center justify-center font-metal text-2xl text-white border border-crimson/60">
+                            G</div>
+                        <div>
+                            <h4 class="font-bold text-sm tracking-widest uppercase text-white">Guitarra Tempestad</h4>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest">Riffs Devastadores y Armonías
+                                Negras</p>
+                        </div>
+                    </div>
+                    <!-- Integrante 3 -->
+                    <div class="flex items-center gap-4 p-4 bg-zinc-950 border border-zinc-900">
+                        <div
+                            class="h-12 w-12 bg-crimson/30 flex items-center justify-center font-metal text-2xl text-white border border-crimson/60">
+                            B</div>
+                        <div>
+                            <h4 class="font-bold text-sm tracking-widest uppercase text-white">Bajo Vórtice</h4>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest">Frecuencias Subterráneas e
+                                Infrasonido</p>
+                        </div>
+                    </div>
+                    <!-- Integrante 4 -->
+                    <div class="flex items-center gap-4 p-4 bg-zinc-950 border border-zinc-900">
+                        <div
+                            class="h-12 w-12 bg-crimson/30 flex items-center justify-center font-metal text-2xl text-white border border-crimson/60">
+                            D</div>
+                        <div>
+                            <h4 class="font-bold text-sm tracking-widest uppercase text-white">Batería Cataclismo</h4>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest">Doble Pedal Sideral y Blast Beats
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 5: TIENDA DE MERCANCÍA (HORDAS SHOP) -->
+    <section id="tienda" class="relative py-24 px-4 bg-zinc-950 border-t border-crimson/20 z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="font-metal text-5xl md:text-6xl text-white tracking-wider">TIENDA OFICIAL (HORDAS SHOP)</h2>
+                <div class="w-24 h-1 bg-crimson mx-auto mt-4"></div>
+                <p class="text-gray-500 text-xs tracking-widest uppercase mt-2">Adquiere tus talismanes de destrucción
+                </p>
+            </div>
+
+            <!-- Productos -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Producto 1 -->
+                <div class="bg-black border border-zinc-900 p-4 space-y-4 flex flex-col justify-between">
+                    <div>
+                        <div
+                            class="relative group overflow-hidden bg-zinc-950 p-6 flex justify-center items-center h-64 border border-zinc-900">
+                            <!-- SVG que representa la camiseta brutal de la banda -->
+                            <svg class="h-44 w-auto text-crimson/80 group-hover:scale-105 transition duration-300"
+                                viewBox="0 0 100 100" fill="currentColor">
+                                <path
+                                    d="M20,15 L35,5 L50,15 L65,5 L80,15 L75,40 L65,40 L65,90 L35,90 L35,40 L25,40 Z" />
+                                <text x="50" y="55" font-family="sans-serif" font-size="6" fill="black"
+                                    text-anchor="middle" font-weight="bold">TURBULENTUS</text>
+                            </svg>
+                            <span
+                                class="absolute top-2 right-2 bg-crimson text-white text-[9px] font-bold px-2 py-0.5 uppercase tracking-widest">BEST
+                                SELLER</span>
+                        </div>
+                        <h3 class="font-bold tracking-widest uppercase text-white mt-4 text-base">Camiseta "Vórtice
+                            Cósmico"</h3>
+                        <p class="text-xs text-gray-500 uppercase">Negro Absoluto / Estampado Premium en Algodón Pesado
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-zinc-900">
+                        <span class="text-crimson-glow font-bold text-lg font-mono">$65.000 COP</span>
+                        <button onclick="addToCart('Camiseta Vórtice Cósmico', 65000)"
+                            class="px-4 py-2 bg-crimson hover:bg-crimson-glow text-white text-xs uppercase tracking-widest font-bold transition">
+                            Añadir al Culto
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 2 -->
+                <div class="bg-black border border-zinc-900 p-4 space-y-4 flex flex-col justify-between">
+                    <div>
+                        <div
+                            class="relative group overflow-hidden bg-zinc-950 p-6 flex justify-center items-center h-64 border border-zinc-900">
+                            <!-- SVG que representa el Vinilo de la banda -->
+                            <svg class="h-44 w-auto text-zinc-800 group-hover:rotate-45 transition duration-1000"
+                                viewBox="0 0 100 100" fill="currentColor">
+                                <circle cx="50" cy="50" r="45" fill="#111" />
+                                <circle cx="50" cy="50" r="40" stroke="#333" stroke-width="1" fill="none" />
+                                <circle cx="50" cy="50" r="30" stroke="#444" stroke-width="1" fill="none" />
+                                <circle cx="50" cy="50" r="20" fill="#991b1b" />
+                                <circle cx="50" cy="50" r="5" fill="#000" />
+                            </svg>
+                            <span
+                                class="absolute top-2 right-2 bg-crimson text-white text-[9px] font-bold px-2 py-0.5 uppercase tracking-widest">EDICIÓN
+                                LIMITADA</span>
+                        </div>
+                        <h3 class="font-bold tracking-widest uppercase text-white mt-4 text-base">Vinilo Splatter
+                            "Vórtice Anárquico"</h3>
+                        <p class="text-xs text-gray-500 uppercase">Vinilo de 12" Rojo Translúcido con Salpicaduras
+                            Negras</p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-zinc-900">
+                        <span class="text-crimson-glow font-bold text-lg font-mono">$120.000 COP</span>
+                        <button onclick="addToCart('Vinilo Splatter Vórtice Anárquico', 120000)"
+                            class="px-4 py-2 bg-crimson hover:bg-crimson-glow text-white text-xs uppercase tracking-widest font-bold transition">
+                            Añadir al Culto
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 3 -->
+                <div class="bg-black border border-zinc-900 p-4 space-y-4 flex flex-col justify-between">
+                    <div>
+                        <div
+                            class="relative group overflow-hidden bg-zinc-950 p-6 flex justify-center items-center h-64 border border-zinc-900">
+                            <!-- SVG que representa el CD Digipack -->
+                            <svg class="h-44 w-auto text-zinc-900 group-hover:scale-105 transition duration-300"
+                                viewBox="0 0 100 100" fill="currentColor">
+                                <rect x="15" y="15" width="70" height="70" rx="3" fill="#0f0202" stroke="#450a0a"
+                                    stroke-width="2" />
+                                <circle cx="50" cy="50" r="25" fill="#222" />
+                                <circle cx="50" cy="50" r="8" fill="#991b1b" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold tracking-widest uppercase text-white mt-4 text-base">CD Digipack 6 Paneles
+                            + Booklet</h3>
+                        <p class="text-xs text-gray-500 uppercase">Edición de Lujo con letras completas y arte cósmico
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-zinc-900">
+                        <span class="text-crimson-glow font-bold text-lg font-mono">$40.000 COP</span>
+                        <button onclick="addToCart('CD Digipack Vórtice Anárquico', 40000)"
+                            class="px-4 py-2 bg-crimson hover:bg-crimson-glow text-white text-xs uppercase tracking-widest font-bold transition">
+                            Añadir al Culto
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 6: CONTACTO & RESERVAS / BOOKING -->
+    <section id="contacto" class="relative py-24 px-4 bg-void border-t border-crimson/20 z-10">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="font-metal text-5xl md:text-6xl text-white tracking-wider">BOOKING & CONTACTO</h2>
+                <div class="w-24 h-1 bg-crimson mx-auto mt-4"></div>
+                <p class="text-gray-500 text-xs tracking-widest uppercase mt-2">Canaliza tus intenciones hacia nosotros
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+
+                <!-- Info de Contacto Rápida -->
+                <div class="bg-zinc-950/80 p-6 border border-crimson/20 space-y-6">
+                    <h3 class="font-metal text-2xl text-crimson-glow tracking-widest">Contacto Directo</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        ¿Quieres llevar la turbulencia y la insignificancia cósmica a tu festival, concierto, o bar en
+                        cualquier parte de Colombia o el mundo? Contáctanos de inmediato.
+                    </p>
+
+                    <div class="space-y-4 pt-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-crimson-glow font-bold">Booking:</span>
+                            <a href="mailto:turbulentusband@gmail.com"
+                                class="text-gray-200 hover:text-crimson-glow transition font-mono">turbulentusband@gmail.com</a>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-crimson-glow font-bold">Teléfono/WhatsApp:</span>
+                            <a href="https://wa.me/573142165722"
+                                class="text-gray-200 hover:text-crimson-glow transition font-mono">+57 314 216 5722</a>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-crimson-glow font-bold">Ubicación:</span>
+                            <span class="text-gray-400">Bogotá / Colombia</span>
+                        </div>
+                    </div>
+
+                    <!-- Enlaces Rápidos Redes / Streaming -->
+                    <div class="pt-6 border-t border-zinc-900 flex items-center gap-4 justify-center md:justify-start">
+                        <a href="https://wa.me/573142165722"
+                            class="px-4 py-2 bg-green-950/30 hover:bg-green-900/60 border border-green-800 text-xs uppercase tracking-widest transition flex items-center gap-2">
+                            WhatsApp Directo
+                        </a>
+                        <a href="mailto:turbulentusband@gmail.com"
+                            class="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs uppercase tracking-widest transition">
+                            Enviar Correo
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Formulario Interactivo -->
+                <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Nombre o
+                            Promotora</label>
+                        <input type="text" required
+                            class="w-full bg-black border border-zinc-800 focus:border-crimson-glow p-3 text-white text-sm outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Correo
+                            Electrónico</label>
+                        <input type="email" required
+                            class="w-full bg-black border border-zinc-800 focus:border-crimson-glow p-3 text-white text-sm outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Asunto</label>
+                        <select
+                            class="w-full bg-black border border-zinc-800 focus:border-crimson-glow p-3 text-white text-sm outline-none transition">
+                            <option value="Booking / Concierto">Booking / Contratación de Show</option>
+                            <option value="Prensa / Entrevista">Prensa / Entrevista</option>
+                            <option value="Duda sobre Tienda">Duda sobre la Tienda</option>
+                            <option value="Otro">Otro Asunto Caótico</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-gray-400 mb-1">Mensaje</label>
+                        <textarea rows="4" required
+                            class="w-full bg-black border border-zinc-800 focus:border-crimson-glow p-3 text-white text-sm outline-none transition"
+                            placeholder="Describe los detalles del ritual..."></textarea>
+                    </div>
+                    <button type="submit"
+                        class="w-full py-3 bg-crimson hover:bg-crimson-glow text-white text-xs uppercase tracking-widest font-bold transition shadow-lg hover:shadow-red-950/40">
+                        Enviar Transmisión
+                    </button>
+                    <!-- Success Message Box -->
+                    <div id="contact-success"
+                        class="hidden p-3 bg-crimson-dark/40 border border-crimson/50 text-xs uppercase text-center tracking-wider text-white">
+                        ¡Mensaje transmitido con éxito al abismo! Te responderemos pronto.
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-black py-12 border-t border-zinc-900 z-10 relative">
+        <div class="max-w-6xl mx-auto px-4 text-center space-y-6">
+            <h3 class="font-metal text-3xl text-crimson-glow text-glow tracking-widest">TURBULENTUS</h3>
+            <p class="text-xs text-gray-500 uppercase tracking-widest leading-relaxed">
+                © 2026 TURBULENTUS DEATH METAL. Bogotá, Colombia.<br>
+                Voz Profunda • Ritmos Pesados • Horror Cósmico
+            </p>
+            <div class="w-16 h-0.5 bg-crimson/30 mx-auto"></div>
+            <p class="text-[10px] text-zinc-700 tracking-wider font-mono">
+                "Nada permanece, todo colapsa. La turbulencia es eterna."
+            </p>
+        </div>
+    </footer>
+
+    <!-- CARRITO DE COMPRAS / PANEL LATERAL -->
+    <div id="cart-drawer"
+        class="fixed inset-y-0 right-0 w-full max-w-md bg-void border-l border-crimson/30 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between">
+        <div class="p-6 border-b border-crimson/20 flex items-center justify-between">
+            <h3 class="font-metal text-2xl text-white tracking-wider">Cofre de Adquisiciones</h3>
+            <button onclick="toggleCart()" class="p-2 text-gray-400 hover:text-crimson-glow transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div id="cart-items" class="p-6 flex-1 overflow-y-auto space-y-4">
+            <!-- Items de Carrito Dinámicos -->
+            <p class="text-gray-500 text-center text-sm py-8 uppercase tracking-widest">El cofre está vacío
+                temporalmente.</p>
+        </div>
+
+        <div class="p-6 border-t border-crimson/20 bg-black/60 space-y-4">
+            <div class="flex items-center justify-between font-bold text-sm tracking-widest uppercase">
+                <span class="text-gray-400">Total Sacrificio:</span>
+                <span id="cart-total" class="text-crimson-glow font-mono text-lg">$0 COP</span>
+            </div>
+            <button onclick="checkout()"
+                class="w-full py-3 bg-crimson hover:bg-crimson-glow text-white text-xs uppercase tracking-widest font-bold transition">
+                Consolidar Transacción (WhatsApp)
+            </button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS INTERACTIVOS -->
+    <script>
+        // 1. Partículas del Fondo (Ceniza, Nubes, Embers)
+        const canvas = document.getElementById('particlesCanvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // initParticles();
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2.5 + 0.8;
+                this.speedY = -(Math.random() * 1.6 + 0.4); // Ascendiendo lentamente imitando calor y ascuas
+                this.speedX = Math.random() * 1.2 - 0.6; // Movimiento lateral errático
+                this.opacity = Math.random() * 0.75 + 0.25;
+
+                // Variedad de cenizas: 65% grises/oscuras, 35% ascuas incandescentes
+                const rand = Math.random();
+                if (rand > 0.85) {
+                    this.color = '#ef4444'; // Ascuas carmesí brillantes
+                } else if (rand > 0.70) {
+                    this.color = '#f97316'; // Ascuas naranja fuego
+                } else {
+                    this.color = '#4b5563'; // Ceniza gris clásica
+                }
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+
+                // Reiniciar al fondo del viewport si sobrepasa la parte superior
+                if (this.y < -10) {
+                    this.y = canvas.height + 10;
+                    this.x = Math.random() * canvas.width;
+                    this.opacity = Math.random() * 0.75 + 0.25;
+                }
+                // Envolver los bordes de la pantalla en horizontal
+                if (this.x < -10) this.x = canvas.width + 10;
+                if (this.x > canvas.width + 10) this.x = -10;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+
+                // Darle un sutil efecto de brillo a los elementos incandescentes
+                if (this.color !== '#4b5563') {
+                    ctx.shadowBlur = 6;
+                    ctx.shadowColor = this.color;
+                } else {
+                    ctx.shadowBlur = 0;
+                }
+
+                ctx.fill();
+                // Limpiar la sombra para evitar bugs gráficos en partículas sin brillo
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            // Densidad de partículas ajustada según tamaño de pantalla
+            const numberOfParticles = Math.floor((canvas.width * canvas.height) / 11000);
+            console.log(`Inicializando ${numberOfParticles} partículas para un fondo dinámico y atmosférico.`);
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+        initParticles();
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // 2. Sintetizador de Audio Interactivo (Web Audio API) para Drone Cósmico / Death Metal Sub-bass
+        let audioCtx = null;
+        let droneOsc = null;
+        let droneOsc2 = null;
+        let noiseNode = null;
+        let filterNode = null;
+        let masterGain = null;
+        let isSynthPlaying = false;
+
+        function toggleAmbientSynth() {
+            if (!audioCtx) {
+                // Inicialización tras acción del usuario
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            if (isSynthPlaying) {
+                // Detener el sonido gradualmente
+                if (masterGain) {
+                    masterGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.5);
+                    setTimeout(() => {
+                        droneOsc.stop();
+                        droneOsc2.stop();
+                        isSynthPlaying = false;
+                        document.getElementById('synth-text').innerText = 'Invocación Sonora (Activar Drone)';
+                    }, 1500);
+                }
+            } else {
+                // Crear y arrancar sintetizador
+                masterGain = audioCtx.createGain();
+                masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+
+                // Oscilador 1: Sub-bajo profundo (Growl fundamental)
+                droneOsc = audioCtx.createOscillator();
+                droneOsc.type = 'sawtooth';
+                droneOsc.frequency.setValueAtTime(45, audioCtx.currentTime); // Mi 1 (muy grave)
+
+                // Oscilador 2: Armónico desafinado para crear turbulencia analógica
+                droneOsc2 = audioCtx.createOscillator();
+                droneOsc2.type = 'sawtooth';
+                droneOsc2.frequency.setValueAtTime(45.5, audioCtx.currentTime); // Desafinado ligeramente
+
+                // Filtro Pasa Bajos muy cerrado para que suene oscuro y pesado
+                filterNode = audioCtx.createBiquadFilter();
+                filterNode.type = 'lowpass';
+                filterNode.frequency.setValueAtTime(150, audioCtx.currentTime);
+                filterNode.Q.setValueAtTime(4, audioCtx.currentTime);
+
+                // Conexión
+                droneOsc.connect(filterNode);
+                droneOsc2.connect(filterNode);
+                filterNode.connect(masterGain);
+                masterGain.connect(audioCtx.destination);
+
+                // LFO para modular el filtro lentamente imitando vientos cósmicos
+                let lfo = audioCtx.createOscillator();
+                lfo.frequency.setValueAtTime(0.2, audioCtx.currentTime); // Muy lento
+                let lfoGain = audioCtx.createGain();
+                lfoGain.gain.setValueAtTime(40, audioCtx.currentTime);
+                lfo.connect(lfoGain);
+                lfoGain.connect(filterNode.frequency);
+
+                lfo.start();
+                droneOsc.start();
+                droneOsc2.start();
+
+                // Fade-in de atmósfera
+                masterGain.gain.exponentialRampToValueAtTime(0.6, audioCtx.currentTime + 2.0);
+
+                isSynthPlaying = true;
+                document.getElementById('synth-text').innerText = 'Invocación Activa (Apagar Drone)';
+            }
+        }
+
+        // 3. Tracklist e Interacción de Letras
+        const songLyrics = {
+            1: "--- INVOCACIÓN INSTRUMENTAL ---\n\n(Sonidos de vientos cósmicos y cenizas de un mundo en descomposición, abriendo la mente al infinito colapso.)",
+            2: "--- ABISMO ANCESTRAL ---\n\nSurgiendo del magma ancestral\nColombia se desangra en espirales de desorden\nLa voz clama en frecuencias ultra-bajas\nDestruyendo las catedrales del ego.\n\nNo hay retorno\nNo hay redención\nSolo el hierro frío\ny el silencio del abismo perpetuo.",
+            3: "--- INSIGNIFICANCIA CÓSMICA ---\n\nMirando al horizonte invertido\nEl cielo ruge con lenguas de fuego carmesí\nNubes negras cubren toda esperanza.\n\n¿Quién eres tú frente a la tormenta silente?\nTu carne se disuelve en flecos al viento\nUn suspiro de carbón en la inmensidad.\n\n¡Colapso inminente!\n¡Insignificante humanidad!",
+            4: "--- DESGARRADOS POR EL CAOS ---\n\nSinfonía violenta de blastbeats infernales\nVelocidad que desgarra la corteza terrestre\nFusión de black y death destructivo.\n\nLa anarquía del cosmos rige nuestro destino\nLa T corona el abismo\n¡Turbulentus gobierna la tormenta final!"
+        };
+
+        function selectTrack(trackId) {
+            // Reset active states
+            document.querySelectorAll('.track-row').forEach(row => {
+                row.classList.remove('bg-crimson-dark/10', 'border-crimson/20');
+                row.classList.add('bg-transparent', 'border-zinc-900');
+            });
+
+            // Highlight active row
+            const activeRow = document.getElementById(`track-${trackId}`);
+            activeRow.classList.remove('bg-transparent', 'border-zinc-900');
+            activeRow.classList.add('bg-crimson-dark/10', 'border-crimson/20');
+
+            // Actualizar Letra
+            const textElement = document.getElementById('lyrics-content');
+            textElement.innerText = songLyrics[trackId];
+
+            // Si el sintetizador está activo, modificar su frecuencia de base con el track elegido para interactividad
+            if (isSynthPlaying && audioCtx) {
+                let baseFreq = 45;
+                if (trackId === 2) baseFreq = 50;
+                if (trackId === 3) baseFreq = 38; // Súper grave para la voz ultra baja
+                if (trackId === 4) baseFreq = 60; // Un poco más agudo e histérico
+
+                droneOsc.frequency.exponentialRampToValueAtTime(baseFreq, audioCtx.currentTime + 0.5);
+                droneOsc2.frequency.exponentialRampToValueAtTime(baseFreq + 0.5, audioCtx.currentTime + 0.5);
+            }
+        }
+
+        // Cargar primera letra por defecto
+        selectTrack(1);
+
+        // 4. CARRITO DE COMPRAS INTERACTIVO (Local in-memory)
+        let cart = [];
+        const cartCount = document.getElementById('cart-count');
+        const cartItems = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const cartDrawer = document.getElementById('cart-drawer');
+
+        function toggleCart() {
+            cartDrawer.classList.toggle('translate-x-full');
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function addToCart(name, price) {
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name, price, quantity: 1 });
+            }
+            updateCartUI();
+
+            // Animación del botón carrito
+            cartCount.classList.remove('opacity-0');
+            cartCount.classList.add('scale-125');
+            setTimeout(() => cartCount.classList.remove('scale-125'), 200);
+        }
+
+        function removeFromCart(name) {
+            cart = cart.filter(item => item.name !== name);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            // Cantidad total
+            const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+            cartCount.innerText = totalItems;
+            if (totalItems === 0) {
+                cartCount.classList.add('opacity-0');
+                cartItems.innerHTML = '<p class="text-gray-500 text-center text-sm py-8 uppercase tracking-widest">El cofre está vacío temporalmente.</p>';
+                cartTotal.innerText = '$0 COP';
+                return;
+            } else {
+                cartCount.classList.remove('opacity-0');
+            }
+
+            // Renderizado items
+            cartItems.innerHTML = '';
+            let total = 0;
+            cart.forEach(item => {
+                total += item.price * item.quantity;
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-3 bg-zinc-950 border border-zinc-900';
+                div.innerHTML = `
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-white">${item.name}</p>
+                        <p class="text-[10px] text-gray-400 font-mono">${item.quantity} x $${item.price.toLocaleString('es-CO')} COP</p>
+                    </div>
+                    <button onclick="removeFromCart('${item.name}')" class="text-xs text-crimson hover:text-crimson-glow font-bold uppercase tracking-wider transition">Eliminar</button>
+                `;
+                cartItems.appendChild(div);
+            });
+
+            cartTotal.innerText = `$${total.toLocaleString('es-CO')} COP`;
+        }
+
+        function checkout() {
+            if (cart.length === 0) return;
+            let message = `Saludos Turbulentus, deseo adquirir talismanes de destrucción:\n\n`;
+            cart.forEach(item => {
+                message += `- ${item.name} (Cant: ${item.quantity})\n`;
+            });
+            const totalVal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            message += `\nTotal: $${totalVal.toLocaleString('es-CO')} COP\nEnvío coordinado a mi ubicación.`;
+
+            // Enlace de whatsapp codificado
+            const encodedText = encodeURIComponent(message);
+            window.open(`https://wa.me/573142165722?text=${encodedText}`, '_blank');
+        }
+
+        // 5. Envío de Formulario de Contacto
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            const successBox = document.getElementById('contact-success');
+            successBox.classList.remove('hidden');
+            event.target.reset();
+            setTimeout(() => {
+                successBox.classList.add('hidden');
+            }, 6000);
+        }
+    </script>
+</body>
+
+</html>
